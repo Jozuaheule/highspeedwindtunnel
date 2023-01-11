@@ -7,13 +7,23 @@ import matplotlib.pyplot as plt
 import Data_getter
 import flowtools
 
+# return graphs
+def return_graph(xlist, ylist, labelx, labely, legend_measurement, legend_theoretical, position, xfit, yfit):
+
+    plt.xlabel(str(labelx), fontsize = 16)
+    plt.ylabel(str(labely), fontsize = 16)
+    #plotting graphs including markers
+    plt.plot(xlist, ylist, markersize=10, linewidth=1, label = str(legend_measurement), marker="o", color="black")
+    plt.plot(xfit, yfit, markersize=10, linewidth=1, label = str(legend_theoretical), marker="x", color="red")
+    plt.legend(loc= position)
+    plt.grid(True)
+    plt.show()
+
+    return
+
 xThroat = 65.0 #mm
 gamma = 1.4
-data = Data_getter.get_data_area()
-xvals = data[0]
-heights = data[1]
-areas = data[2]
-print(data)
+xvals, heights, areas = Data_getter.get_data_area()
 pressureRatios = np.array([])
 MachNums = np.array([])
 for i in range(len(xvals)):
@@ -24,13 +34,9 @@ for i in range(len(xvals)):
         mode = 'sup'
 
     results = flowtools.flowisentropic2(gamma, A, mode)
-    MachNums = np.append(MachNums, results[0])
-    pressureRatios = np.append(pressureRatios, results[2])
+    MachNums = np.append(MachNums, float(results[0]))
+    pressureRatios = np.append(pressureRatios, float(results[2]))
 
-print(pressureRatios)
-print(MachNums)
-plt.plot(xvals, MachNums)
-plt.plot(xvals, pressureRatios)
-plt.show()
+return_graph(xvals, pressureRatios, "x [mm]", "$p/p_t$ [-]", "quasi 1 D theory", "measured pressure ratio", "upper right", xvals, pressureRatios)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+return_graph(xvals, MachNums, "x [mm]", "M [-]", "quasi 1 D theory", "computed from measured pressure ratio", "lower right", xvals, MachNums)
