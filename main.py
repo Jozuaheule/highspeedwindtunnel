@@ -13,19 +13,34 @@ def return_graph(xlist, ylist, labelx, labely, legend_measurement, legend_theore
     plt.xlabel(str(labelx), fontsize = 16)
     plt.ylabel(str(labely), fontsize = 16)
     #plotting graphs including markers
-    plt.plot(xlist, ylist, markersize=10, linewidth=1, label = str(legend_measurement), marker="o", color="black")
-    plt.plot(xfit, yfit, markersize=10, linewidth=1, label = str(legend_theoretical), marker="x", color="red")
+    plt.plot(xlist, ylist, markersize=8, markerfacecolor='none', linewidth=1, label = str(legend_measurement), marker="o", color="black")
+    plt.plot(xfit, yfit, markersize=8, markerfacecolor='none', linewidth=1, label = str(legend_theoretical), marker="x", color="red")
     plt.legend(loc= position)
     plt.grid(True)
     plt.show()
 
     return
 
+def return_graph(xlist, ylist, yfit, y2list, labelx, labely, legend_p3, legend_p4,legend_p5, position):
+
+    plt.xlabel(str(labelx), fontsize = 16)
+    plt.ylabel(str(labely), fontsize = 16)
+    #plotting graphs including markers
+    plt.plot(xlist, ylist, markersize=8, markerfacecolor='none', linewidth=1, label = str(legend_p3), marker="o", color="black")
+    plt.plot(xlist, yfit, markersize=8, markerfacecolor='none', linewidth=1, label = str(legend_p4), marker="x", color="red")
+    plt.plot(xlist, y2list, markersize=8, markerfacecolor='none', linewidth=1, label=str(legend_p5), marker="x",
+             color="red")
+    plt.legend(loc= position)
+    plt.grid(True)
+    plt.show()
+
+    return
 xThroat = 65.0 #mm
 gamma = 1.4
 xvals, heights, areas = Data_getter.get_data_area()
 pressureRatios = np.array([])
 MachNums = np.array([])
+
 for i in range(len(xvals)):
     A = areas[i]
     if xvals[i] < xThroat:
@@ -37,8 +52,47 @@ for i in range(len(xvals)):
     MachNums = np.append(MachNums, float(results[0]))
     pressureRatios = np.append(pressureRatios, float(results[2]))
 
-return_graph(xvals, pressureRatios, "x [mm]", "$p/p_t$ [-]", "quasi 1 D theory", "measured pressure ratio", "upper right", xvals, pressureRatios)
-return_graph(xvals, MachNums, "x [mm]", "M [-]", "quasi 1 D theory", "computed from measured pressure ratio", "lower right", xvals, MachNums)
+#obtain measurement data
+x, p = Data_getter.get_data_pressure("Data_Test_1AB.txt")
+print(x)
+
+AB1 = np.genfromtxt("Data_Test_1AB.txt", skip_header=2)
+B2 = np.genfromtxt("Data_Test_2B.txt", skip_header=2)
+M1_list = []
+Mach = []
+for i in AB1[:,1]:
+    results = flowtools.flowisentropic2(1.4, i,'pres')
+    Mach.append(float(results[0]))
+
+MachB2 = []
+for i in B2[:, 1]:
+    results = flowtools.flowisentropic2(1.4, i, 'pres')
+    MachB2.append(float(results[0]))
+
+MachB2 = np.array(MachB2) * 1.12
+pressureB2 = B2[:, 1]
+print(pressureB2)
+
+"""
+for i in range(len(x)):
+    pressure = p[i]
+    print(pressure)
+    print(x[i])
+    if x[i] < xThroat:
+        mode = 'sub'
+    else:
+        mode = 'sup'
+
+    measure_mach = flowtools.flowisentropic2(gamma, pressure, mode)
+    print(measure_mach)
+"""
+# Graphs for 1AB
+return_graph(xvals, pressureRatios, "x [mm]", "$p/p_t$ [-]", "quasi 1 D theory", "measured pressure ratio", "upper right", xvals, p)
+return_graph(xvals, MachNums, "x [mm]", "M [-]", "quasi 1 D theory", "computed from measured pressure ratio", "lower right", xvals, Mach)
+
+# Graphs for 2B
+return_graph(xvals, pressureRatios, "x [mm]", "$p/p_t$ [-]", "quasi 1 D theory", "measured pressure ratio", "center right", xvals, pressureB2)
+return_graph(xvals, MachNums, "x [mm]", "M [-]", "quasi 1 D theory", "computed from measured pressure ratio", "center right", xvals, MachB2)
 
 # Het volgende stuk geeft de hoogte van een punt in de tweede throat met de gegeven diffuser setting
 
@@ -73,7 +127,7 @@ def getpept(X, METER4, METER5):
 
     return pept3, pept5, pept6
 
-xpoints = Data_getter.get_data_pressure()[0]
-ppoints = Data_getter.get_data_pressure()[1]
-plt.plot(xpoints, ppoints)
-plt.show()
+#xpoints = Data_getter.get_data_pressure()[0]
+#ppoints = Data_getter.get_data_pressure()[1]
+#plt.plot(xpoints, ppoints)
+#plt.show()

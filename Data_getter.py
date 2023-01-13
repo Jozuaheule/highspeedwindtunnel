@@ -68,18 +68,21 @@ def get_data_diffuser(x):
 
     return m4, m5, hk2, h
 
-def get_data_pressure():
-    with open("testfile.txt", "r") as f:
+def get_data_pressure(file):
+    with open(str(file), "r") as f:
         lines = f.readlines()
     lines = lines[2:]
 
-    x = np.array([])
-    p = np.array([])
+    x = []
+    p = []
 
     for elem in lines:
 
-        data = elem.split('      ')
-        x = np.append(x, float(data[0]))
-        p = np.append(p, float(data[1]))
+        data = elem.split("  ")
+        x.append(float(data[0]))
+        p.append(float(data[1]))
+
+    x = np.array(x)
+    p = np.array(p)
 
     return x, p
