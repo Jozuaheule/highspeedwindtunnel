@@ -30,6 +30,9 @@ def return_graph(xlist, ylist, yfit, y2list, labelx, labely, legend_p3, legend_p
     plt.plot(xlist, yfit, markersize=8, markerfacecolor='none', linewidth=1, label = str(legend_p4), marker="x", color="red")
     plt.plot(xlist, y2list, markersize=8, markerfacecolor='none', linewidth=1, label=str(legend_p5), marker="x",
              color="red")
+    plt.axvline(x=7, color='b', label='axvline - full height')
+    plt.axvline(x=7, color='b', label='axvline - full height')
+    plt.axvline(x=7, color='b', label='axvline - full height')
     plt.legend(loc= position)
     plt.grid(True)
     plt.show()
